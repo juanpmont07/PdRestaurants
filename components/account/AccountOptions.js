@@ -102,11 +102,13 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
                     </ListItem>
                 ))
             }
+            {showModal === true &&
             <Modal isVisible={showModal} setVisible={setShowModal}>
                 {
                     renderComponent
                 }
             </Modal>
+            }
         </View>
     )
 }
