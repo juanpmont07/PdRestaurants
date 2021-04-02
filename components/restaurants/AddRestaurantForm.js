@@ -1,14 +1,14 @@
-import { filter, isEmpty, map, size } from 'lodash'
-import uuid from 'random-uuid-v4'
-import React, { useEffect, useState } from 'react'
-import { Alert, Dimensions, ScrollView, StyleSheet, View } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { Alert, Dimensions, StyleSheet, Text, View, ScrollView } from 'react-native'
+import { Avatar, Button, Icon, Input, Image } from 'react-native-elements'
+import { map, size, filter, isEmpty } from 'lodash' 
 import CountryPicker from 'react-native-country-picker-modal'
-import { Avatar, Button, Icon, Image, Input } from 'react-native-elements'
 import MapView from 'react-native-maps'
-import Modal from '../../components/Modal'
-import { addDocumentWithoutId, getCurrentUser, uploadImage } from '../../utils/actions'
-import { getCurrentLocation, loadImageFromGallery, validateEmail } from '../../utils/helpers'
+import uuid from 'random-uuid-v4'
 
+import { formatPhone, getCurrentLocation, loadImageFromGallery, validateEmail } from '../../utils/helpers'
+import { addDocumentWithoutId, getCurrentUser, uploadImage } from '../../utils/actions'
+import Modal from '../../components/Modal'
 
 const widthScreen = Dimensions.get("window").width
 
@@ -172,7 +172,7 @@ function MapRestaurant({ isVisibleMap, setIsVisibleMap, setLocationRestaurant, t
     }
 
     return (
-        <Modal isVisible={isVisibleMap} setIsVisible={setIsVisibleMap}>
+        <Modal isVisible={isVisibleMap} setVisible={setIsVisibleMap}>
             <View>
                 {
                     newRegion && (
@@ -324,7 +324,7 @@ function FormAdd({
                 rightIcon={{
                     type: "material-community",
                     name: "google-maps",
-                    color: locationRestaurant ? "#442484" : "#c2c2c2",
+                    color: locationRestaurant ? "##7ccc44" : "#c2c2c2",
                     onPress: () => setIsVisibleMap(true)
                 }}
             />
@@ -337,17 +337,17 @@ function FormAdd({
             />
             <View style={styles.phoneView}>
                 <CountryPicker
-                    withFlag  //bandera pais
-                    withCallingCode // codigo pais
-                    withFilter // buscar paises
-                    withCallingCodeButton // icono llamada
+                    withFlag
+                    withCallingCode
+                    withFilter
+                    withCallingCodeButton
                     containerStyle={styles.countryPicker}
                     countryCode={country}
                     onSelect={(country) => {
                         setFormData({ 
                             ...formData, 
-                            "country": country.cca2, //codigo de pais de 2 caracteres
-                            "callingCode": country.callingCode[0] //codigos del pais
+                            "country": country.cca2, 
+                            "callingCode": country.callingCode[0]
                         })
                     }}
                 />

@@ -1,187 +1,114 @@
+import { firebaseApp } from './firebase'
+import { FireSQL } from 'firesql'
 import * as firebase from 'firebase'
 import 'firebase/firestore'
-import { map } from 'lodash'
-import { firebaseApp } from './firebase'
+
 import { fileToBlob } from './helpers'
+import { map } from 'lodash'
 
-
-
-const db = firebase.firestore(firebaseApp);
+const db = firebase.firestore(firebaseApp)
+const fireSQL = new FireSQL(firebase.firestore(), { includeId: "id" })
 
 export const isUserLogged = () => {
-  let isLogged = false;
-  firebase.auth().onAuthStateChanged((user) => {
-    user !== null && (isLogged = true);
-  });
-  return isLogged;
-};
-
-export const getCurrentUser = () => {
-  return firebase.auth().currentUser;
-  /*let isLogged = false
-   firebase.auth().onAuthStateChanged((user)=>{
-      user !== null && (isLogged = true)
-   })
-   return isLogged;
- */
-};
-
-export const registerUser = async (email, password) => {
-  const result = { statusResponse: true, error: null };
-  try {
-    await firebase.auth().createUserWithEmailAndPassword(email, password);
-  } catch (error) {
-    result.statusResponse = false;
-    result.error = "Este correo ya ha sido registrado";
-  }
-  return result;
-};
-
-export const loginWithEmailAndPassword = async (email, password) => {
-  const result = { statusResponse: true, error: null };
-  try {
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-  } catch (error) {
-    result.statusResponse = false;
-    result.error = "Usuario o contraseña no válidos.";
-  }
-  return result;
-};
-
-export const closeSession = () => {
-  return firebase.auth().signOut();
-};
-
-export const uploadImage = async (image, path, name) => {
-  const result = { statusResponse: false, error: null, url: null };
-  const ref = firebase.storage().ref(path).child(name);
-  const blob = await fileToBlob(image);
-  
-  try {
-    await ref.put(blob)
-    const url =  await firebase.storage().ref(`${path}/${name}`).getDownloadURL();
-    result.statusResponse = true;
-
-    result.url = url;
-  } catch (error) {
-    result.error = error;
-  }
-  return result;
-};
-
-
-export const updateProfile = async(data) =>{
-  const result = { statusResponse: true, error: null };
-  try {
-    await firebase.auth().currentUser.updateProfile(data)
-  } catch (error) {
-    result.statusResponse = false
-    result.error = error
-  }
-
-  return result
+    let isLogged = false
+    firebase.auth().onAuthStateChanged((user) => {
+        user !== null && (isLogged = true)
+    })
+    return isLogged
 }
 
-export const getCollection = async (collection) => {
-  const result = { statusResponse: false, data: null, error: null };
-  try {
-    const data = await db.collection(collection).get();
-    const arrayData = data.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    result.statusResponse = true;
-    result.data = arrayData;
-  } catch (error) {
-    result.error = error;
-  }
-  return result;
-};
+export const getCurrentUser = () => {
+    return firebase.auth().currentUser
+}
 
-export const addDocument = async (collection, datas) => {
-  const result = { statusResponse: false, data: null, error: null };
-  try {
-    const data = await db.collection(collection).add(datas);
-    result.data = { id: Response.id };
-    result.statusResponse = true;
-  } catch (error) {
-    result.error = error;
-  }
-  return result;
-};
+export const closeSession = () => {
+    return firebase.auth().signOut()
+}
 
-export const getDocument = async (collection, id) => {
-  const result = { statusResponse: false, data: null, error: null };
-  try {
-    const response = await db.collection(collection).doc(id).get();
-    result.data = { id: response.id, ...response.data() };
-    result.statusResponse = true;
-  } catch (error) {
-    result.error = error;
-  }
+export const registerUser = async(email, password) => {
+    const result = { statusResponse: true, error: null}
+    try {
+        await firebase.auth().createUserWithEmailAndPassword(email, password)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = "Este correo ya ha sido registrado."
+    }
+    return result
+}
 
-  return result;
-};
+export const loginWithEmailAndPassword = async(email, password) => {
+    const result = { statusResponse: true, error: null}
+    try {
+        await firebase.auth().signInWithEmailAndPassword(email, password)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = "Usuario o contraseña no válidos."
+    }
+    return result
+}
 
-export const updateDocument = async (collection, id, data) => {
-  const result = { statusResponse: false, error: null };
-  try {
-    await db.collection(collection).doc(id).update(data);
-    result.statusResponse = true;
-  } catch (error) {
-    result.error = error;
-  }
+export const uploadImage = async(image, path, name) => {
+    const result = { statusResponse: false, error: null, url: null }
+    const ref = firebase.storage().ref(path).child(name)
+    const blob = await fileToBlob(image)
 
-  return result;
-};
+    try {
+        await ref.put(blob)
+        const url = await firebase.storage().ref(`${path}/${name}`).getDownloadURL()
+        result.statusResponse = true
+        result.url = url
+    } catch (error) {
+        result.error = error
+    }
+    return result
+}
 
-export const deleteDocument = async (collection, id) => {
-  const result = { statusResponse: false, error: null };
-  try {
-    await db.collection(collection).doc(id).delete();
-    result.statusResponse = true;
-  } catch (error) {
-    result.error = error;
-  }
-
-  return result;
-};
-
+export const updateProfile = async(data) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await firebase.auth().currentUser.updateProfile(data)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
 
 export const reauthenticate = async(password) => {
-  const result = { statusResponse: true, error: null }
-  const user = getCurrentUser()
-  const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password)
+    const result = { statusResponse: true, error: null }
+    const user = getCurrentUser()
+    const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password)
 
-  try {
-      await user.reauthenticateWithCredential(credentials)
-  } catch (error) {
-      result.statusResponse = false
-      result.error = error
-  }
-  return result     
+    try {
+        await user.reauthenticateWithCredential(credentials)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
 }
 
 export const updateEmail = async(email) => {
-  const result = { statusResponse: true, error: null }
-  try {
-      await firebase.auth().currentUser.updateEmail(email)
-  } catch (error) {
-      result.statusResponse = false
-      result.error = error
-  }
-  return result     
+    const result = { statusResponse: true, error: null }
+    try {
+        await firebase.auth().currentUser.updateEmail(email)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
 }
-
 
 export const updatePassword = async(password) => {
-  const result = { statusResponse: true, error: null }
-  try {
-      await firebase.auth().currentUser.updatePassword(password)
-  } catch (error) {
-      result.statusResponse = false
-      result.error = error
-  }
-  return result     
+    const result = { statusResponse: true, error: null }
+    try {
+        await firebase.auth().currentUser.updatePassword(password)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
 }
-
 
 export const addDocumentWithoutId = async(collection, data) => {
     const result = { statusResponse: true, error: null }
@@ -254,6 +181,16 @@ export const getDocumentById = async(collection, id) => {
     return result     
 }
 
+export const updateDocument = async(collection, id, data) => {
+    const result = { statusResponse: true, error: null }
+    try {
+        await db.collection(collection).doc(id).update(data)
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
 
 export const getRestaurantReviews = async(id) => {
     const result = { statusResponse: true, error: null, reviews: [] }
@@ -316,16 +253,12 @@ export const getFavorites = async() => {
             .collection("favorites")
             .where("idUser", "==", getCurrentUser().uid)
             .get()
-        const restaurantsId = []
-        response.forEach((doc) => {
-            const favorite = doc.data()
-            restaurantsId.push(favorite.idRestaurant)
-        })   
         await Promise.all(
-            map(restaurantsId, async(restaurantId) => {
-                const response2 = await getDocumentById("restaurants", restaurantId)
-                if (response2.statusResponse) {
-                    result.favorites.push(response2.document)
+            map(response.docs, async(doc) => {
+                const favorite = doc.data()
+                const restaurant = await getDocumentById("restaurants", favorite.idRestaurant)
+                if (restaurant.statusResponse) {
+                    result.favorites.push(restaurant.document)
                 }
             })
         )
@@ -349,6 +282,17 @@ export const getTopRestaurants = async(limit) => {
             restaurant.id = doc.id
             result.restaurants.push(restaurant)
         })
+    } catch (error) {
+        result.statusResponse = false
+        result.error = error
+    }
+    return result     
+}
+
+export const searchRestaurants = async(criteria) => {
+    const result = { statusResponse: true, error: null, restaurants: [] }
+    try {
+        result.restaurants = await fireSQL.query(`SELECT * FROM restaurants WHERE name LIKE '${criteria}%'`)
     } catch (error) {
         result.statusResponse = false
         result.error = error

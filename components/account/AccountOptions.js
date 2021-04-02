@@ -56,19 +56,19 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
             case "email":
                 setRenderComponent(
                     <ChangeEmailForm
-                    email={user.email}
-                    setShowModal={setShowModal}
-                    toastRef={toastRef}
-                    setRelodUser={setRelodUser}
-                />
+                        email={user.email}
+                        setShowModal={setShowModal}
+                        toastRef={toastRef}
+                        setRelodUser={setRelodUser}
+                    />
                 )
                 break;
             case "password":
                 setRenderComponent(
                     <ChangePasswordForm
-                    setShowModal={setShowModal}
-                    toastRef={toastRef}
-                />
+                        setShowModal={setShowModal}
+                        toastRef={toastRef}
+                    />
                 )
                 break;
         }
@@ -102,13 +102,11 @@ export default function AccountOptions({ user, toastRef, setRelodUser }) {
                     </ListItem>
                 ))
             }
-            {showModal === true &&
             <Modal isVisible={showModal} setVisible={setShowModal}>
                 {
                     renderComponent
                 }
             </Modal>
-            }
         </View>
     )
 }

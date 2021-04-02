@@ -1,10 +1,10 @@
 import React, { useRef, useState } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import Toast from 'react-native-easy-toast'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Loading from '../../components/Loading'
-import AddRestaurantForm from '../../components/restaurants/AddRestaurantForm'
 
+import AddRestaurantForm from '../../components/restaurants/AddRestaurantForm'
 
 export default function AddRestaurant({ navigation }) {
     const toastRef = useRef()
@@ -12,7 +12,7 @@ export default function AddRestaurant({ navigation }) {
 
     return (
         <KeyboardAwareScrollView>
-            <AddRestaurantForm
+            <AddRestaurantForm 
                 toastRef={toastRef} 
                 setLoading={setLoading}
                 navigation={navigation}

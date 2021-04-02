@@ -17,12 +17,19 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.juan.restaurant",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.juan.restaurant",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "config":{
+          "googleMaps":{
+            "apiKey":"AIzaSyCbFLH3aa63mObkgzsr82JyQk-90pMt2nA"
+          }
       },
       "permissions": [
         "CAMERA_ROLL",
@@ -33,6 +40,8 @@
         "ACCESS_FINE_LOCATION"
       ]
     },
+
+
     "web": {
       "favicon": "./assets/favicon.png"
     }
