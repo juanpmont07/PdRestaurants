@@ -10,7 +10,15 @@ import ChangePasswordForm from './ChangePasswordForm';
 
 export default function AccountOptions({ user, toastRef, setRelodUser }) {
     const [showModal, setShowModal] = useState(false)
-    const [renderComponent, setRenderComponent] = useState(null)
+    const [renderComponent, setRenderComponent] = useState(view)
+
+ const view = ()=>{
+     return(
+         <View>
+             Hola
+         </View>
+     )
+ }
 
     const generateOptions = () => {
         return [
